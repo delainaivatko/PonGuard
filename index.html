@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PonGuard, Pantau Longsor di Parongpong</title>
+<link rel="stylesheet" href="css/style.css">
+<a href="https://2b1494aed6f9d9.lhr.life/" target="_blank"></a>
+
+<!--Jquery-->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+  .legend {
+    max-height: 300px;     /* Batasi tinggi agar bisa scroll */
+    overflow-y: auto;      /* Scroll vertikal aktif */
+    overflow-x: hidden;
+    padding: 10px;
+    background-color: rgba(255,255,255,0.9);
+    border-radius: 5px;
+    font-size: 12px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    width: 250px;          /* Tambahan jika kamu ingin lebar tetap */
+  }
+
+  .legend div {
+    width: 30px;
+    height: 5px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.5;
+  }
+
+  div.legend.leaflet-control br {
+    clear: both;
+  }
+
+  .leaflet-control-fullscreen-button {
+    background-color: black !important;
+    background-image: none !important;
+  }
+
+  .leaflet-control-fullscreen-button::before {
+    content: '⛶';
+    color: white;
+    font-size: 18px;
+    display: block;
+    text-align: center;
+    line-height: 28px;
+  }
+
+  .leaflet-control-fullscreen-button:hover {
+    background-color: #333 !important;
+  }
+</style>
+
+
+<!----Leaflet CSS---->
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easybutton.css">
+<link href='https://api.mapbox.com/mapbox.js/plugins/leafletfullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
+<link rel="stylesheet" href="https://balladaniel.github.io/leaflet-dataclassification/leafletdataclassification.css" />
+
+
+<!--Leaflet JS-->
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-
+20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leafletfullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js"
+charset="utf-8"></script>
+<script src="https://balladaniel.github.io/leaflet-dataclassification/leafletdataclassification.js"></script>
+
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Leaflet Fullscreen JS -->
+<script src="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js"></script>
+
+<!-- LocateControl JS -->
+<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
+
+</head>
+ 
+<body>
+<header id="navbar">
+    <div class="container">
+        <div class="logo">
+        <img src="assets/logo-KBB.png" alt="Logo" width="100">
+        <h1 style="color: #da6416; font-family: Tahoma;"> PonGuard </h1>
+        </div>
+    <nav>
+    <ul>
+        <li><a href="#hero-section"> Home </a></li>
+        <li><a href="#map-section"> Map </a></li>
+        <li><a href="#data-section"> Data </a></li>
+        <li><a href="#author-section"> Author </a></li>
+    </ul>
+    </nav>
+    </div>
+</header>
+
+    <div id="hero-section" class="hero-section" style=" background-image: url('assets/bghs.png');" ">    
+        <div class="hero-content"> 
+        <h1> PonGuard: Informasi kerawanan longsor di Kecamatan Parongpong </h1>
+        <p> PonGuard merupakan laman yang memberikan informasi tentang bencana longsor 
+        di Kecamatan Parongpong untuk monitoring dan pencegahan. </p>
+        </div>
+    </div>
+      
+    <div id="map-section">
+        <h2 style="font-family: Tahoma; color:#5fb6be;">Cek petanya di sini!</h2>
+        <div id="map" style="height: 500px; width: 80%;">
+
+  <!-- akan muncul peta disini -->
+        </div>
+    </div>
+        
+<div id="data-section">
+  <h2 style="font-family: Tahoma;">Data Tersedia </h2>
+  <div class="container">
+  <div class="column">
+  <div class="data-item">
+  <img src="assets/parongpong.png" alt="Image 1" style="size-adjust: 50px;">
+  <div class="description">
+    <h3>Administrasi</h3>
+    <p>Kecamatan Parongpong adalah sebuah wilayah di Kabupaten Bandung Barat, Provinsi Jawa Barat, Indonesia. 
+        Terletak sekitar 13,5 kilometer dari ibu kota Kabupaten Bandung Barat, Parongpong dikenal sebagai 
+        kota wisata bunga, karena mayoritas petani di daerah ini menanam bunga dan tanaman hias, 
+        terutama di daerah Cihideung. Ketinggian rata-rata kecamatan ini berada di 700 mdpl dan belokasi strategis
+        karena berbatasan dengan Kota Bandung.</p>
+  </div>
+  </div>
+  </div>
+
+  <div class="column">
+  <div class="data-item">
+  <img src="assets/longsor.jpg" alt="Image 2" style="height: auto; width: 400px; padding-top: 75px;">
+  <div class="description">
+  <h3>Parameter Tanah Longsor </h3>
+  <p>Tanah longsor adalah peristiwa geologi yang terjadi ketika massa tanah, batuan, atau 
+        puing-puing bergerak menuruni lereng akibat pengaruh gravitasi. Longsor dapat terjadi secara tiba-tiba atau bertahap, 
+        tergantung pada kondisi tanah dan faktor pemicunya. Penyebab terjadinya longsor ada banyak berdasarkan peta di atas diambil
+        dengan 4 parameter, yaitu curah hujan, erodibilitas tanah, kemiringan lereng, dan penggunaan lahan.</p>
+  </div>
+  </div>
+  </div>
+  </div>
+</div>
+  
+<div id="Tabel">
+  <div class="custom-container">
+  <table border="1">
+  <tr>
+    <th style="text-align: center; font-family: Tahoma; color: #5fb6be;">Data</th>
+    <th style="text-align: center; font-family: Tahoma; color: #5fb6be;">Sumber dan Link</th>
+
+  </tr>
+  
+  <tr>
+    <td>  
+    <img src="assets/parongpong.png" height="150px" align ="center" alt="Batas Administrasi Kecamatan"> 
+    </td>
+    <td> <p>
+            Batas Administrasi Kecamatan Parongpong data bersumber dari <b>InaGeoportal oleh BIG </b>. Berikut tautan untuk
+            mengunduh data Batas Administrasi Kecamatan Parongpong: <br>
+            URL: <a href="https://drive.google.com/file/d/1L8DbY18FjbDY646xWmLhRwriWBy90FuV/view?usp=drive_link">🗺️ Data Batas Administrasi</a>
+    </td>
+  </tr>
+        
+  <tr> 
+    <td>        
+      <img src="assets/CH.gif" height="150px"; align ="center"; alt="Venus">
+    </td>
+    <td> <p> Data curah hujan yang digunakan bersumber dari <b>CHIRPS (Climate Hazards Group InfraRed Precipitation with Station data)</b>. Berikut tautan 
+            untuk mengunduh data Curah Hujan: <br>
+            URL: <a href="https://drive.google.com/file/d/133aUk5pq-duG9onFhAMTJ8VT8KFvqZrV/view?usp=drive_link" target="_blank">
+  ☔ Data Curah Hujan </a>
+        </p>
+    </td>
+  </tr>
+        
+  <tr>
+    <td>
+      <img src="assets/ET.jpg" height="150px" align ="center" alt="Bumi"> 
+
+    </td>
+    <td> <p> Data erodilitas tanah bersumber dari data jenis data <b> FAO (Food and Agriculture Organization of the United Nations)</b> kemudian 
+    dihubungkan dengan penelitian ahli yang mengklasifikasikan erodibilitas tanah berdasarkan jenis tanah. Berikut tautan untuk mengunduh
+    data erodibilitas tanah: <br>
+    URL: <a href="https://drive.google.com/uc?export=download&id=1caoJFCkrzvbjplTCUHyoaqOs7UnLtNL1" target="_blank">
+    🌱 Data Erodibilitas Tanah </a>
+        </p>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <img src="assets/bukit.png" height="150px" alt="Mars.jpeg">
+    </td>
+    <td> <p>Data Kemiringan Lereng bersumber dari data <b>DEMNAS oleh BIG</b> kemudian dianlisis menggunakan perangkat lunak GIS. Berikut tautan untuk
+    mengunduh data kemiringan lereng: <br>
+     URL: <a href="https://drive.google.com/uc?export=download&id=1gBhNPMkqF4C2cVOD88rl82jPnR_Uk6rX" target="_blank">
+  ⛰️ Data Kemiringan Lereng </a>
+        </p>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <img src="assets/RUmah.png" height="150px" alt="Jupiter">
+    </td>
+    <td> <p> Data Tutupan Lahan yang digunakan bersumber dari <b> InaGeoportal oleh BIG</b>. Berikut tautan untuk mengunduh data tutupan lahan: <br>
+     URL: <a href="https://drive.google.com/uc?export=download&id=1Kz5YwVIFfceAxGoi_VrT0uKkiNEhewne" target="_blank">
+  🏠 Data Tutupan Lahan </a>
+          </p>
+   </td>  
+  </tr>
+
+  <tr>
+    <td>
+      <img src="assets/TandaLongsor.png" height = "150px" alt="Saturnus">
+    </td>     
+    <td> <p> Data <b>Tingkat Kerawanan Longsor</b> diperoleh dari kalkulasi skoring dan pembobotan setiap parameter. Berikut tautan untuk mengunduh data 
+    tingkat kerawanan longsor: <br>
+    URL: <a href="https://drive.google.com/uc?export=download&id=1voX6N4eoJU3R4OPXWbaUeYrKSz0F55aU" target="_blank">
+  ⚠️ Data Tingkat Kerawanan Longsor </a>
+        </p>
+    </td>
+  </tr>
+</table>
+  </div>
+</div>
+   
+<div id="author-section">
+  <div class="author-content">
+  <h2>Tentang Pembuat</h2>
+  <img src="assets/Dela Oktaviani(1).JPG" alt="Profile Picture" class="profile-picture">
+  <div class="author-name">
+  <h3>Dela Oktaviani</h3>
+  </div>
+      <p>Seorang mahasiswa semester 4 dari Sains Infomasi Geografi di Universitas Pendidikan Indonesia, Kota Bandung. Saya memiliki
+      peminatan terhadap Sistem Informasi Geografi (SIG) dan Penginderaan Jauh untuk kajian atmosfer dan bencana alam. Saat ini sedang melakukan banyak
+      penelitian di bidang Penginderaan Jauh untuk vegetasi. Saya juga aktif mengikuti pelatihan dan proyek kolaboratif yang 
+      berfokus pada pemanfaatan data spasial dan citra satelit. Ke depan, saya berharap dapat berkontribusi dalam pengembangan sistem pemantauan lingkungan yang berbasis teknologi geospasial. </p>
+  </div>
+</div>
+
+<div id="footer">
+  <div class="footer-content">
+  <h3>Hubungi Saya</h3>
+  <p>Email: delaoktavia3@upi.edu</p>
+  <p>Phone: +6285703717968</p>
+  </div>
+</div>
+                            
+<script src="js/script.js"></script>               
+                
+                <script>
+        
+                const AdminKecamatan = new L.LayerGroup();
+                $.getJSON("./assets/data-spasial/AdminKecamatan.geojson", function (Catatan) {
+                L.geoJSON(Catatan, {
+                style: {
+                color : "#deae3e",
+                weight : 2,
+                opacity : 1,
+                dashArray: 'null',
+                lineJoin: 'round'
+                }
+                }).addTo(AdminKecamatan);
+                });
+                AdminKecamatan.addTo(map);
+
+                const CurahHujan = new L.LayerGroup();
+                $.getJSON("./assets/data-spasial/CurahHujan.geojson", function (Catatan) {
+                L.geoJSON(Catatan, {
+                style: {
+                color : "#777287",
+                weight : 2,
+                opacity : 1,
+                dashArray: 'null',
+                lineJoin: 'round'
+                }
+                }).addTo(CurahHujan);
+                });
+                CurahHujan.addTo(map);
+
+                const ErodibilitasTanah = new L.LayerGroup();
+                $.getJSON("./assets/data-spasial/ErodibilitasTanah.geojson", function (Kelas) {
+                L.geoJson(Kelas, {
+                style: function(feature) {
+                switch (feature.properties.Kelas) {
+                case 'Sedang': return {fillColor:"#d4c69d", fillOpacity: 0.8, weight:
+                0.5, color: "#ffffff"};
+                case 'Tinggi': return {fillColor:"#c48d52", fillOpacity: 0.8, weight:
+                0.5, color: "#ffffff"};
+                }
+                },
+                onEachFeature: function (feature, layer) {
+                layer.bindPopup('<b>Erodibilitas Tanah: </b>'+ feature.properties.Kelas)
+                }
+                }).addTo(ErodibilitasTanah);
+                });
+                ErodibilitasTanah.addTo(map);
+
+                const LULC = new L.LayerGroup();
+                $.getJSON("./assets/data-spasial/LULC.geojson", function (REMARK) {
+                L.geoJson(REMARK, {
+                style: function(feature) {
+                switch (feature.properties.REMARK) {
+                case 'Hutan Rimba': return {fillColor:"#9dd4ab", fillOpacity: 0.8, weight:
+                0.5, color: "#ffffff"};
+                case 'Perkebunan/Kebun': return {fillColor:"#b5d49d", fillOpacity: 0.8, weight:
+                0.5, color: "#ffffff"};
+                case 'Permukiman dan Tempat Kegiatan': return {fillColor:"#e64956", fillOpacity: 0.8, weight:
+                0.5, color: "#ffffff"};
+                case 'Sawah': return {fillColor:"#a3f0d6", fillOpacity: 0.8, weight:
+                0.5, color: "#ffffff"};
+                case 'Tegalan/Ladang': return {fillColor:"#e8f0a3", fillOpacity: 0.8, weight:
+                0.5, color: "#ffffff"};
+                case 'Kebun Campuran': return {fillColor:"#d4ed15", fillOpacity: 0.8, weight:
+                0.5, color: "#ffffff"};
+                }
+                },
+                onEachFeature: function (feature, layer) {
+                layer.bindPopup('<b>Tutupan Lahan: </b>'+ feature.properties.REMARK)
+                }
+                }).addTo(LULC);
+                });
+                LULC.addTo(map);
+
+                const Kemiringan_Lereng  = new L.LayerGroup();
+                $.getJSON("./assets/data-spasial/Kemiringan_Lereng.geojson", function (REMARK) {
+                L.geoJson(REMARK, {
+                style: function(feature) {
+                switch (feature.properties.REMARK) {
+                case 'Datar': return {fillColor:"#d9f0a3", fillOpacity: 0.8, weight:
+                0.5, color: "transparent"};
+                case 'Landai': return {fillColor:"#addd8e", fillOpacity: 0.8, weight:
+                0.5, color: "transparent"};
+                case 'Agak Curam': return {fillColor:"#fee391", fillOpacity: 0.8, weight:
+                0.5, color: "transparent"};
+                case 'Curam': return {fillColor:"#fdae61", fillOpacity: 0.8, weight:
+                0.5, color: "transparent"};
+                case 'Sangat Curam': return {fillColor:"#d73027", fillOpacity: 0.8, weight:
+                0.5, color: "transparent"};
+                }
+                },
+                onEachFeature: function (feature, layer) {
+                layer.bindPopup('<b>Tutupan Lahan: </b>'+ feature.properties.REMARK)
+                }
+                }).addTo(Kemiringan_Lereng);
+                });
+                Kemiringan_Lereng.addTo(map);
+
+                const Kerawanan = new L.LayerGroup();
+                $.getJSON("./assets/data-spasial/Kerawanan.geojson", function (Tingkat_Kerawanan_Longsor) {
+                L.geoJson(Tingkat_Kerawanan_Longsor, {
+                style: function(feature) {
+                switch (feature.properties.Tingkat_Kerawanan_Longsor) {
+                case 'Tidak Rawan': return {fillColor:"#deebf7", fillOpacity: 0.8, weight:
+                0.5, color: "transparent"};
+                case 'Agak Rawan': return {fillColor:"#9ecae1", fillOpacity: 0.8, weight:
+                0.5, color: "transparent"};
+                case 'Cukup Rawan': return {fillColor:"#3182bd", fillOpacity: 0.8, weight:
+                0.5, color: "transparent"};
+                case 'Rawan': return {fillColor:"#9e9ac8", fillOpacity: 0.8, weight:
+                0.5, color: "transparent"};
+                case 'Sangat Rawan': return {fillColor:"#6a51a3", fillOpacity: 0.8, weight:
+                0.5, color: "transparent"};
+                }
+                },
+                onEachFeature: function (feature, layer) {
+                layer.bindPopup('<b>Tingkat Kerawanan: </b>'+ feature.properties.Tingkat_Kerawanan_Longsor)
+                }
+                }).addTo(Kerawanan);
+                });
+                Kerawanan.addTo(map);
+
+                const AdminDesa = new L.LayerGroup();
+                $.getJSON("./assets/data-spasial/AdminDesa.geojson", function (NAMOBJ) {
+                L.geoJson(NAMOBJ, {
+                style: function(feature) {
+                switch (feature.properties.NAMOBJ) {
+                case 'Cigugurgirang': return {fillColor:"#76c7f0", fillOpacity: 0.8, weight:
+                0.5, color: "#ffffff"};
+                case 'Ciwaruga': return {fillColor:"#a4e672", fillOpacity: 0.8, weight:
+                0.5, color: "#ffffff"};
+                case 'Sariwangi': return {fillColor:"#f7b267", fillOpacity: 0.8, weight:
+                0.5, color: "#ffffff"};
+                case 'Cihanjuang': return {fillColor:"#c6a4e7", fillOpacity: 0.8, weight:
+                0.5, color: "#ffffff"};
+                case 'Cihanjuangrahayu': return {fillColor:"#f48ca3", fillOpacity: 0.8, weight:
+                0.5, color: "#ffffff"};
+                case 'Cihideung': return {fillColor:"#ffe066", fillOpacity: 0.8, weight:
+                0.5, color: "#ffffff"};
+                case 'Karyawangi': return {fillColor:"#7cdedc", fillOpacity: 0.8, weight:
+                0.5, color: "#ffffff"};
+                }
+                },
+                onEachFeature: function (feature, layer) {
+                layer.bindPopup('<b>Desa: </b>'+ feature.properties.NAMOBJ)
+                }
+                }).addTo(AdminDesa);
+                });
+                AdminDesa.addTo(map);
+
+                const Component = {
+                  "Batas Administrasi Kecamatan": AdminKecamatan,
+                  "Batas Administrasi Desa": AdminDesa,
+                  "Tutupan Lahan": LULC,
+                  "Curah Hujan": CurahHujan,
+                  "Kemiringan Lereng": Kemiringan_Lereng,
+                  "Erodibilitas Tanah": ErodibilitasTanah,
+                  "Tingkat Kerawanan Longsor": Kerawanan
+                };
+                
+                L.control.layers(baseMaps, Component).addTo(map);
+                
+                let legend = L.control({ position: "topright" });
+                legend.onAdd = function () { 
+                  
+                let div = L.DomUtil.create("div", "legend"); 
+                div.innerHTML = 
+                    // Judul Legenda 
+                    '<p style="font-size: 18px; font-weight: bold; margin-bottom: 5px; margin-top: 10px;">Legenda</p>' + 
+                    // Legenda Layer Batas Administrasi Kec
+                    '<p style="font-size: 12px; font-weight: bold; margin-bottom: 5px; margin-top: 10px;">Batas Administrasi Kecamatan</p>' + 
+                    '<div style="background-color: #deae3e; height: 10px;"></div>Kecamatan Parongpong<br>'+ 
+                    // Legenda Layer Batas Administrasi Desa
+                    '<p style="font-size: 12px; font-weight: bold; margin-bottom: 5px; margin-top: 10px;">Batas Administrasi Desa</p>' + 
+                    '<div style="background-color: #76c7f0; height: 10px;"></div>Cigugurgirang<br>'+ 
+                    '<div style="background-color: #a4e672; height: 10px;"></div>Ciwaruga<br>'+ 
+                    '<div style="background-color: #f7b267; height: 10px;"></div>Sariwangi<br>'+ 
+                    '<div style="background-color: #c6a4e7; height: 10px;"></div>Cihanjuang<br>'+ 
+                    '<div style="background-color: #f48ca3; height: 10px;"></div>Cihanjuangrahayu<br>'+ 
+                    '<div style="background-color: #ffe066; height: 10px;"></div>Cihideung<br>'+ 
+                    '<div style="background-color: #7cdedc; height: 10px;"></div>Karyawangi<br>'+        
+                    // Layer Curah Hujan
+                    '<p style="font-size: 12px; font-weight: bold; margin-bottom: 5px; margin-top: 10px;">Curah Hujan</p>' + 
+                    '<div style="background-color: #777287; height: 10px;"></div>Rendah<br>'+ 
+                    // Layer Erodibilitas Tanah
+                    '<p style="font-size: 12px; font-weight: bold; margin-bottom: 5px; margin-top: 10px;">Erodibilitas Tanah</p>' + 
+                    '<div style="background-color: #d4c69d; height: 10px;"></div>Sedang<br>'+
+                    '<div style="background-color: #c48d52; height: 10px;"></div>Tinggi<br>'+ 
+                    // Layer LULC
+                    '<p style="font-size: 12px; font-weight: bold; margin-bottom: 5px; margin-top: 10px;">Tutupan Lahan</p>' + 
+                    '<div style="background-color: #9dd4ab; height: 10px;"></div>Hutan Rimba<br>' + 
+                    '<div style="background-color: #b5d49d; height: 10px;"></div>Perkebunan/Kebun<br>' + 
+                    '<div style="background-color: #a3f0d6; height: 10px;"></div>Sawah<br>' + 
+                    '<div style="background-color: #e8f0a3; height: 10px;"></div>Tegalan/Ladang<br>' + 
+                    '<div style="background-color: #d4ed15; height: 10px;"></div>Kebun Campuran<br>' +
+                    '<div style="background-color: #e64956; height: 10px;"></div>Permukiman dan Tempat Kegiatan<br>' + 
+                    //Layer Kemiringan Lereng
+                    '<p style="font-size: 12px; font-weight: bold; margin-bottom: 5px; margin-top: 10px;">Kemiringan Lereng</p>' + 
+                    '<div style="background-color: #d9f0a3; height: 10px;"></div>Datar<br>'+
+                    '<div style="background-color: #addd8e; height: 10px;"></div>Landai<br>'+ 
+                    '<div style="background-color: #fee391; height: 10px;"></div>Agak Curam<br>'+ 
+                    '<div style="background-color: #fdae61; height: 10px;"></div>Curam<br>'+
+                    '<div style="background-color: #d73027; height: 10px;"></div>Sangat Curam<br>'+
+                  //Layer Kerawanan
+                    '<p style="font-size: 12px; font-weight: bold; margin-bottom: 5px; margin-top: 10px;">Tingkat Kerawanan Longsor</p>' + 
+                    '<div style="background-color: #deebf7; height: 10px;"></div>Tidak Rawan<br>'+
+                    '<div style="background-color: #9ecae1; height: 10px;"></div>Agak Rawan<br>'+
+                    '<div style="background-color: #3182bd; height: 10px;"></div>Cukup Rawan<br>'+
+                    '<div style="background-color: #9e9ac8; height: 10px;"></div>Rawan<br>'+
+                    '<div style="background-color: #6a51a3; height: 10px;"></div>Sangat Rawan<br>';
+                return div; 
+            }; 
+            legend.addTo(map);
+            </script>
+              
+</body>
+</html>
